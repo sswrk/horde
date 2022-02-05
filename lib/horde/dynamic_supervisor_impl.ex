@@ -42,7 +42,7 @@ defmodule Horde.DynamicSupervisorImpl do
   @doc false
   def init(options) do
     name = Keyword.get(options, :name)
-    metadata = Keyword.get(options, :metadata, %{})
+    metadata = Keyword.get(options, :metadata)
 
     Logger.info("Starting #{inspect(__MODULE__)} with name #{inspect(name)}")
 

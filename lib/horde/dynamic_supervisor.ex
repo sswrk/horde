@@ -121,7 +121,8 @@ defmodule Horde.DynamicSupervisor do
       :distribution_strategy,
       :process_redistribution,
       :members,
-      :delta_crdt_options
+      :delta_crdt_options,
+      :metadata
     ]
 
     {sup_options, start_options} = Keyword.split(options, keys)
@@ -149,7 +150,7 @@ defmodule Horde.DynamicSupervisor do
     members = Keyword.get(options, :members, [])
     delta_crdt_options = Keyword.get(options, :delta_crdt_options, [])
     process_redistribution = Keyword.get(options, :process_redistribution, :passive)
-    metadata = Keyword.get(options, :metadata, %{})
+    metadata = Keyword.get(options, :metadata)
 
     distribution_strategy =
       Keyword.get(
@@ -190,7 +191,7 @@ defmodule Horde.DynamicSupervisor do
           {Horde.DynamicSupervisorImpl,
            [
              name: name,
-             metadata: Map.get(flags, :metadata, %{}),
+             metadata: flags.metadata,
              root_name: name,
              init_module: mod,
              strategy: flags.strategy,
