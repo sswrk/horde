@@ -44,6 +44,8 @@ defmodule Horde.DynamicSupervisorImpl do
     name = Keyword.get(options, :name)
     metadata = Keyword.get(options, :metadata)
 
+    IO.inspect("#{__MODULE__}.init/1 metadata: #{inspect(metadata)}")
+
     Logger.info("Starting #{inspect(__MODULE__)} with name #{inspect(name)}")
 
     Process.flag(:trap_exit, true)
