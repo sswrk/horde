@@ -378,8 +378,8 @@ defmodule DynamicSupervisorTest do
 
   describe "graceful shutdown" do
     test "stopping a node moves processes over when they are ready" do
-      # NOTE: here I had to disable redistribution on node :up, otherwise 
-      # sometimes horde would kill the :fast process for redistribution when 
+      # NOTE: here I had to disable redistribution on node :up, otherwise
+      # sometimes horde would kill the :fast process for redistribution when
       # :horde_2_graceful is marked as :alive
 
       {:ok, _} =
@@ -550,6 +550,7 @@ defmodule DynamicSupervisorTest do
         name: :horde_quorum_1,
         strategy: :one_for_one,
         distribution_strategy: Horde.UniformQuorumDistribution,
+        metadata: %{region: "TEST_REGION"},
         members: [:horde_quorum_1, :horde_quorum_2, :horde_quorum_3],
         delta_crdt_options: [sync_interval: 20]
       )
@@ -561,6 +562,7 @@ defmodule DynamicSupervisorTest do
         name: :horde_quorum_2,
         strategy: :one_for_one,
         distribution_strategy: Horde.UniformQuorumDistribution,
+        metadata: %{region: "TEST_REGION"},
         members: [:horde_quorum_1, :horde_quorum_2, :horde_quorum_3],
         delta_crdt_options: [sync_interval: 20]
       )

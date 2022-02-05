@@ -64,6 +64,7 @@ defmodule Horde.DynamicSupervisor do
           | {:members, [Horde.Cluster.member()] | :auto}
           | {:delta_crdt_options, [DeltaCrdt.crdt_option()]}
           | {:process_redistribution, :active | :passive}
+          | {:metadata, %{atom() => any()} | %{}}
 
   @callback init(options()) :: {:ok, options()} | :ignore
   @callback child_spec(options :: options()) :: Supervisor.child_spec()
