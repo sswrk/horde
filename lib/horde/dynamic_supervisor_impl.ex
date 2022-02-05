@@ -3,7 +3,8 @@ defmodule Horde.DynamicSupervisor.Member do
 
   @type t :: %Horde.DynamicSupervisor.Member{}
   @type status :: :uninitialized | :alive | :shutting_down | :dead
-  defstruct [:status, :name]
+  @type metadata :: %{atom() => any()} | %{}
+  defstruct [:status, :name, :metadata]
 end
 
 defmodule Horde.DynamicSupervisorImpl do
@@ -14,6 +15,7 @@ defmodule Horde.DynamicSupervisorImpl do
   import Horde.TableUtils
 
   defstruct name: nil,
+            metadata: %{},
             members: %{},
             members_info: %{},
             processes_by_id: nil,
@@ -40,6 +42,7 @@ defmodule Horde.DynamicSupervisorImpl do
   @doc false
   def init(options) do
     name = Keyword.get(options, :name)
+    metadata = Keyword.get(options, :metadata, %{})
 
     Logger.info("Starting #{inspect(__MODULE__)} with name #{inspect(name)}")
 
@@ -50,7 +53,8 @@ defmodule Horde.DynamicSupervisorImpl do
         supervisor_options: options,
         processes_by_id: new_table(:processes_by_id),
         process_pid_to_id: new_table(:process_pid_to_id),
-        name: name
+        name: name,
+        metadata: metadata
       }
       |> Map.merge(Map.new(Keyword.take(options, [:distribution_strategy])))
 
@@ -87,7 +91,8 @@ defmodule Horde.DynamicSupervisorImpl do
   defp node_info(state) do
     %Horde.DynamicSupervisor.Member{
       status: node_status(state),
-      name: fully_qualified_name(state.name)
+      name: fully_qualified_name(state.name),
+      metadata: state.metadata
     }
   end
 
@@ -317,7 +322,7 @@ defmodule Horde.DynamicSupervisorImpl do
     DeltaCrdt.put(
       crdt_name(state.name),
       {:member_node_info, name},
-      %Horde.DynamicSupervisor.Member{name: name, status: :dead},
+      %Horde.DynamicSupervisor.Member{name: name, status: :dead, metadata: state.metadata},
       :infinity
     )
 
